@@ -1,0 +1,31 @@
+# Системные файлы Windows
+Application Data/
+Cookies/
+Documents/
+Downloads/
+Favorites/
+Links/
+Music/
+Pictures/
+Saved Games/
+Searches/
+Videos/
+
+# Лог-файлы
+*.log
+
+# Бэкапы и временные файлы
+*.bak
+*.swp
+
+# Python файлы
+*.pyc
+*.pyo
+__pycache__/
+
+# Системные файлы MacOS
+.DS_Store
+
+# Файлы конфигурации IDE (например, Visual Studio, PyCharm)
+.idea/
+.vscode/
