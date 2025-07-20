@@ -29,6 +29,3 @@ __pycache__/
 # Файлы конфигурации IDE (например, Visual Studio, PyCharm)
 .idea/
 .vscode/
-
-# Файл с переменными окружения
-.env
