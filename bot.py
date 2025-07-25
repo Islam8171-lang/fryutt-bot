@@ -42,6 +42,15 @@ back_menu = ReplyKeyboardMarkup([["Назад"]], resize_keyboard=True)
 # Список слов и паттернов для фильтрации спама
 BAD_PATTERNS = ["http", "https", "www.", ".net", ".xyz", ".click", ".ru", "free", "claim", "airdrop", "eth"]
 
+# Функция /start
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    user_first_name = update.effective_user.first_name
+    await update.message.reply_text(
+        f"Здравствуйте, {user_first_name}! \nВаш user_id: {user_id}. \nРады, что вы интересуетесь нашими товарами.\nВыберите интересующую вас информацию:",
+        reply_markup=main_menu_keyboard()
+    )
+
 # Обработчик сообщений с антиспамом
 async def handle_message_with_antispam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message is None or update.message.text is None:
