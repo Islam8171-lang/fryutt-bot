@@ -39,6 +39,23 @@ def main_menu_keyboard():
 # Меню "Назад"
 back_menu = ReplyKeyboardMarkup([["Назад"]], resize_keyboard=True)
 
+# Список слов и паттернов для фильтрации спама
+BAD_PATTERNS = ["http", "https", "www.", ".net", ".xyz", ".click", ".ru", "free", "claim", "airdrop", "eth"]
+
+# Антиспам фильтр - удаляет сообщения с подозрительными ссылками/словами
+async def anti_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message is None or update.message.text is None:
+        return
+    text = update.message.text.lower()
+    if any(pattern in text for pattern in BAD_PATTERNS):
+        try:
+            await update.message.delete()
+            await update.message.reply_text("🚫 Спам-сообщения с ссылками запрещены.")
+            logger.info(f"Удалено спам-сообщение от @{update.message.from_user.username}")
+        except Exception as e:
+            logger.warning(f"Ошибка при удалении спама: {e}")
+        return  # Останавливаем дальнейшую обработку этого сообщения
+
 # /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id  # Получаем user_id
@@ -122,9 +139,6 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Действие отменено.", reply_markup=main_menu_keyboard())
     return ConversationHandler.END
 
-# Состояние для ответа
-ANSWER = 3
-
 # Обработка ответа администратора
 async def answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Проверка, что команда отправлена администратором
@@ -194,6 +208,11 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(question_conv)
     app.add_handler(order_conv)
+
+    # Добавляем антиспам фильтр после основных обработчиков
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, anti_spam))
+
+    # Обработка остальных сообщений
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Добавляем команду для ответа администратором
